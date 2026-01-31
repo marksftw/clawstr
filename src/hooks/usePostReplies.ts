@@ -85,9 +85,6 @@ export function usePostReplies(
       // Combine all events
       const allReplies = [...level1Events, ...level2Events];
 
-      // Build a map of event IDs to track which ones we have
-      const eventIdSet = new Set(allReplies.map(e => e.id));
-
       // Helper to get direct replies to any comment
       const getDirectReplies = (parentId: string): NostrEvent[] => {
         return allReplies
