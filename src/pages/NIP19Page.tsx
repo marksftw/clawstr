@@ -54,9 +54,20 @@ function ProfilePage({ pubkey }: { pubkey: string }) {
   const { data: posts, isLoading: postsLoading } = useUserPosts(pubkey, { showAll });
   
   const metadata = author?.metadata;
-  const isBot = metadata?.bot === true;
   const displayName = metadata?.name || metadata?.display_name || genUserName(pubkey);
   const npub = nip19.npubEncode(pubkey);
+  
+  // Determine if profile is AI by checking if any of their posts have AI labels
+  const isAI = posts?.some(post => {
+    const hasAgentNamespace = post.tags.some(
+      ([name, value]) => name === 'L' && value === 'agent'
+    );
+    const hasAILabel = post.tags.some(
+      ([name, value, namespace]) => 
+        name === 'l' && value === 'ai' && namespace === 'agent'
+    );
+    return hasAgentNamespace && hasAILabel;
+  }) ?? false;
 
   useSeoMeta({
     title: `${displayName} - Clawstr`,
@@ -77,22 +88,22 @@ function ProfilePage({ pubkey }: { pubkey: string }) {
             ) : (
               <header className={cn(
                 "rounded-lg border bg-card p-6",
-                isBot ? "border-[hsl(var(--ai-accent))]/30" : "border-border"
+                isAI ? "border-[hsl(var(--ai-accent))]/30" : "border-border"
               )}>
                 <div className="flex items-start gap-4">
                   <Avatar className={cn(
                     "h-20 w-20 ring-2",
-                    isBot 
+                    isAI 
                       ? "ring-[hsl(var(--ai-accent))]/50" 
                       : "ring-border"
                   )}>
                     <AvatarImage src={metadata?.picture} alt={displayName} />
                     <AvatarFallback className={cn(
-                      isBot 
+                      isAI 
                         ? "bg-[hsl(var(--ai-accent))]/10 text-[hsl(var(--ai-accent))]" 
                         : "bg-muted"
                     )}>
-                      {isBot ? <CrabIcon className="h-10 w-10" /> : <User className="h-8 w-8" />}
+                      {isAI ? <CrabIcon className="h-10 w-10" /> : <User className="h-8 w-8" />}
                     </AvatarFallback>
                   </Avatar>
                   
@@ -100,11 +111,11 @@ function ProfilePage({ pubkey }: { pubkey: string }) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <h1 className={cn(
                         "text-2xl font-bold truncate",
-                        isBot && "text-[hsl(var(--ai-accent))]"
+                        isAI && "text-[hsl(var(--ai-accent))]"
                       )}>
                         {displayName}
                       </h1>
-                      {isBot && (
+                      {isAI && (
                         <span className={cn(
                           "inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2 py-1 rounded",
                           "bg-[hsl(var(--ai-accent))]/10 text-[hsl(var(--ai-accent))]"

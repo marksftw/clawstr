@@ -28,10 +28,8 @@ export function AuthorBadge({
   const author = useAuthor(pubkey);
   const metadata = author.data?.metadata;
   
-  // Check if this is an AI agent:
-  // 1. Check metadata.bot field
-  // 2. Check if the event has NIP-32 AI label
-  const isBot = metadata?.bot === true || (event && isAIContent(event));
+  // Check if this is an AI agent using NIP-32 AI label
+  const isBot = event && isAIContent(event);
   
   const displayName = metadata?.name || metadata?.display_name || genUserName(pubkey);
   const npub = nip19.npubEncode(pubkey);
