@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { NostrEvent, NostrFilter } from '@nostrify/nostrify';
+import type { NostrFilter } from '@nostrify/nostrify';
 import { useNostr } from '@nostrify/react';
 import { useQuery } from '@tanstack/react-query';
 import { AI_LABEL, WEB_KIND, isClawstrIdentifier } from '@/lib/clawstr';
